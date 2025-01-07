@@ -9,9 +9,20 @@ marked.setOptions({
   mangle: false,
 });
 
+async function copyStaticAssets() {
+  // Copy CSS files
+  await fs.copy("src/css", "public/css", { overwrite: true });
+
+  // Copy JavaScript files
+  await fs.copy("src/js", "public/js", { overwrite: true });
+}
+
 async function build() {
   // Create public directory
   await fs.ensureDir("public");
+
+  // Copy static assets first
+  await copyStaticAssets();
 
   // Build pages
   const pagesDir = path.join(__dirname, "src/content/pages");
