@@ -8,7 +8,10 @@
   "scripts": {
     "build": "node build.js",
     "serve": "serve public -p 4000",
-    "dev": "npm run build && npm run serve",
+    "dev": "nodemon",
     "clean": "rimraf public/*"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }
