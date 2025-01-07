@@ -1,6 +1,6 @@
 # Static Site with HTML, CSS, JavaScript, & simple Node libraries
 
-##
+## Plan
 
 1. Make a simple landing page
 2. Make a template for a blog post
