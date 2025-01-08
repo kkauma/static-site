@@ -11,13 +11,16 @@ marked.setOptions({
 
 async function copyStaticAssets() {
   try {
-    // Copy CSS files - make sure the filename matches exactly
+    // Copy CSS files
     await fs.copy("src/css/style.css", "public/css/style.css", {
       overwrite: true,
     });
 
     // Copy JavaScript files
     await fs.copy("src/js", "public/js", { overwrite: true });
+
+    // Copy index.html directly
+    await fs.copy("src/index.html", "public/index.html", { overwrite: true });
   } catch (error) {
     console.error("Error copying static assets:", error);
     throw error;
