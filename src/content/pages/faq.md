@@ -1,8 +1,7 @@
 ---
 title: Frequently Asked Questions
+template: faq
 ---
-
-# Frequently Asked Questions
 
 ## General Questions
 

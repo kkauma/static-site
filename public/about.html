@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About Us</title>
+    <title>About Us - Static Site Builder</title>
     <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/about.css" />
   </head>
   <body>
     <nav>
@@ -19,19 +20,29 @@
       </div>
     </nav>
 
-    <main><h1>About Us</h1>
-<p>Welcome to our website! This is a simple static site built with HTML, CSS, and JavaScript.</p>
+    <main class="about-container"><h1>About Us</h1>
+<p>Welcome to our Static Site Builder! We&#39;re passionate about making web development simpler and more accessible for everyone.</p>
+<h2>What We Do</h2>
+<p>Our Static Site Builder is a modern tool that helps you create fast, secure websites without the complexity of traditional content management systems. We combine the power of:</p>
+<ul>
+<li><strong>Simple Markdown Content</strong>: Write your content in easy-to-use Markdown</li>
+<li><strong>Modern Build Tools</strong>: Automated build process with Node.js</li>
+<li><strong>Blog Support</strong>: Built-in blogging capabilities with categories and tags</li>
+<li><strong>Newsletter Integration</strong>: Easy ConvertKit integration for building your audience</li>
+<li><strong>Lightning Fast</strong>: Static sites that load instantly</li>
+</ul>
+<h2>Why Static Sites?</h2>
+<p>Static sites are making a comeback because they&#39;re:</p>
+<ul>
+<li><strong>Fast</strong>: No database queries or server-side processing</li>
+<li><strong>Secure</strong>: Minimal attack surface with no dynamic components</li>
+<li><strong>Reliable</strong>: Can be hosted anywhere with simple HTML files</li>
+<li><strong>Cost-effective</strong>: Lower hosting costs and server requirements</li>
+</ul>
+<h2>Getting Started</h2>
+<p>Want to build your own static site? Check out our <a href="/docs">documentation</a> or visit our <a href="/blog">blog</a> for tutorials and tips.</p>
 </main>
 
-    <script>
-      // Mobile menu toggle
-      const menuButton = document.querySelector(".menu-button");
-      const navLinks = document.querySelector(".nav-links");
-
-      menuButton.addEventListener("click", () => {
-        navLinks.classList.toggle("active");
-      });
-    </script>
     <script src="/js/main.js"></script>
   </body>
 </html>

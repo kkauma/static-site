@@ -12,16 +12,19 @@ marked.setOptions({
 
 async function copyStaticAssets() {
   try {
+    // Create css directory
+    await fs.ensureDir("public/css");
+
     // Copy CSS files
-    await fs.copy("src/css/style.css", "public/css/style.css", {
-      overwrite: true,
-    });
+    await fs.copy("src/css/style.css", "public/css/style.css");
+    await fs.copy("src/css/blog.css", "public/css/blog.css");
+    await fs.copy("src/css/about.css", "public/css/about.css");
 
     // Copy JavaScript files
-    await fs.copy("src/js", "public/js", { overwrite: true });
+    await fs.copy("src/js", "public/js");
 
-    // Copy index.html directly
-    await fs.copy("src/index.html", "public/index.html", { overwrite: true });
+    // Copy index.html
+    await fs.copy("src/index.html", "public/index.html");
   } catch (error) {
     console.error("Error copying static assets:", error);
     throw error;
@@ -72,67 +75,48 @@ async function buildBlog() {
   await fs.outputFile("public/blog/index.html", listHtml);
 }
 
+async function buildPages() {
+  const pagesDir = "src/content/pages";
+  const files = await fs.readdir(pagesDir);
+
+  for (const file of files) {
+    if (path.extname(file) === ".md") {
+      const content = await fs.readFile(path.join(pagesDir, file), "utf8");
+      const { data, content: markdown } = matter(content);
+
+      // Choose template based on frontmatter or default to page template
+      const templateName = data.template || "page";
+      const templatePath = `src/templates/${templateName}.html`;
+
+      try {
+        const templateContent = await fs.readFile(templatePath, "utf8");
+        const template = Handlebars.compile(templateContent);
+
+        const html = template({
+          ...data,
+          content: marked(markdown),
+        });
+
+        const outputPath = `public/${path.basename(file, ".md")}.html`;
+        await fs.outputFile(outputPath, html);
+      } catch (error) {
+        console.error(`Error processing ${file}:`, error);
+      }
+    }
+  }
+}
+
 async function build() {
   try {
     await fs.ensureDir("public");
     await copyStaticAssets();
-
-    // Build pages
-    const pagesDir = path.join(__dirname, "src/content/pages");
-    const pages = await fs.readdir(pagesDir);
-
-    for (const page of pages) {
-      const content = await fs.readFile(path.join(pagesDir, page), "utf-8");
-      const { data, content: markdown } = matter(content);
-      const html = marked(markdown);
-
-      // Read template
-      const template = await fs.readFile("src/templates/page.html", "utf-8");
-
-      // Replace placeholders
-      const final = template
-        .replace("{{title}}", data.title || "")
-        .replace("{{content}}", html);
-
-      // Write file
-      const outPath = path.join("public", page.replace(".md", ".html"));
-      await fs.writeFile(outPath, final);
-    }
-
-    // Build blog posts
-    const blogDir = path.join(__dirname, "src/content/blog");
-    if (await fs.pathExists(blogDir)) {
-      const posts = await fs.readdir(blogDir);
-      await fs.ensureDir(path.join("public", "blog"));
-
-      for (const post of posts) {
-        const content = await fs.readFile(path.join(blogDir, post), "utf-8");
-        const { data, content: markdown } = matter(content);
-        const html = marked(markdown);
-
-        // Read blog template (you might want to create a separate blog template)
-        const template = await fs.readFile("src/templates/page.html", "utf-8");
-
-        // Replace placeholders
-        const final = template
-          .replace("{{title}}", data.title || "")
-          .replace("{{content}}", html);
-
-        // Write file
-        const outPath = path.join(
-          "public",
-          "blog",
-          post.replace(".md", ".html")
-        );
-        await fs.writeFile(outPath, final);
-      }
-    }
-
     await buildBlog();
+    await buildPages();
+    console.log("Build completed successfully!");
   } catch (error) {
     console.error("Build failed:", error);
-    process.exit(1);
+    throw error;
   }
 }
 
-build().catch(console.error);
+build();
