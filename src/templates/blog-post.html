@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About Us</title>
+    <title>{{title}} - Static Site Builder</title>
     <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/blog.css" />
   </head>
   <body>
     <nav>
@@ -19,19 +20,20 @@
       </div>
     </nav>
 
-    <main><h1>About Us</h1>
-<p>Welcome to our website! This is a simple static site built with HTML, CSS, and JavaScript.</p>
-</main>
+    <main class="blog-post">
+      <article>
+        <header>
+          <h1>{{title}}</h1>
+          <div class="post-meta">
+            <time>{{date}}</time>
+            {{#if author}}<span class="author">by {{author}}</span>{{/if}}
+          </div>
+        </header>
 
-    <script>
-      // Mobile menu toggle
-      const menuButton = document.querySelector(".menu-button");
-      const navLinks = document.querySelector(".nav-links");
+        <div class="content">{{{content}}}</div>
+      </article>
+    </main>
 
-      menuButton.addEventListener("click", () => {
-        navLinks.classList.toggle("active");
-      });
-    </script>
     <script src="/js/main.js"></script>
   </body>
 </html>

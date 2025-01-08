@@ -2,6 +2,7 @@ const fs = require("fs-extra");
 const path = require("path");
 const { marked } = require("marked");
 const matter = require("gray-matter");
+const Handlebars = require("handlebars");
 
 // Configure marked for security
 marked.setOptions({
@@ -27,6 +28,50 @@ async function copyStaticAssets() {
   }
 }
 
+async function buildBlog() {
+  // Read blog post template
+  const postTemplate = Handlebars.compile(
+    await fs.readFile("src/templates/blog-post.html", "utf8")
+  );
+
+  // Read blog list template
+  const listTemplate = Handlebars.compile(
+    await fs.readFile("src/templates/blog-list.html", "utf8")
+  );
+
+  // Get all markdown files
+  const blogDir = "src/content/blog";
+  const posts = [];
+
+  const files = await fs.readdir(blogDir);
+
+  for (const file of files) {
+    if (path.extname(file) === ".md") {
+      const content = await fs.readFile(path.join(blogDir, file), "utf8");
+      const { data, content: markdown } = matter(content);
+
+      const post = {
+        ...data,
+        content: marked(markdown),
+        slug: path.basename(file, ".md"),
+      };
+
+      posts.push(post);
+
+      // Create individual blog post page
+      const html = postTemplate(post);
+      await fs.outputFile(`public/blog/${post.slug}/index.html`, html);
+    }
+  }
+
+  // Sort posts by date
+  posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  // Create blog listing page
+  const listHtml = listTemplate({ posts });
+  await fs.outputFile("public/blog/index.html", listHtml);
+}
+
 async function build() {
   try {
     await fs.ensureDir("public");
@@ -42,7 +87,7 @@ async function build() {
       const html = marked(markdown);
 
       // Read template
-      const template = await fs.readFile("templates/page.html", "utf-8");
+      const template = await fs.readFile("src/templates/page.html", "utf-8");
 
       // Replace placeholders
       const final = template
@@ -66,7 +111,7 @@ async function build() {
         const html = marked(markdown);
 
         // Read blog template (you might want to create a separate blog template)
-        const template = await fs.readFile("templates/page.html", "utf-8");
+        const template = await fs.readFile("src/templates/page.html", "utf-8");
 
         // Replace placeholders
         const final = template
@@ -82,6 +127,8 @@ async function build() {
         await fs.writeFile(outPath, final);
       }
     }
+
+    await buildBlog();
   } catch (error) {
     console.error("Build failed:", error);
     process.exit(1);
